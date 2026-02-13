@@ -6,28 +6,23 @@ const currentPath = Astro.url.pathname;
     <div class="header-inner container">
         <a href="/" class="logo" id="logo">
             <span class="logo-icon">⚡</span>
-            <span class="logo-text"
-                >Mundo<span class="logo-accent">Electrónico</span></span
-            >
+            <span class="logo-text">Mundo<span class="logo-accent">Electrónico</span></span>
         </a>
 
         <nav class="nav" id="main-nav">
-            <a
-                href="/"
+            <a 
+                href="/" 
                 class:list={["nav-link", { active: currentPath === "/" }]}
-                >Productos</a
-            >
+                >Inicio</a>
+            <a
+                href="/catalog" 
+                class:list={["nav-link", { active: currentPath === "/catalog" }]}
+                >Catálogo</a>
             <a
                 href="/cart"
                 class:list={["nav-link", { active: currentPath === "/cart" }]}
                 id="nav-cart-link"
-            >
-                🛒 Carrito
-                <span
-                    class="badge cart-count"
-                    id="header-cart-count"
-                    style="display:none;">0</span
-                >
+                >Carrito<span class="badge cart-count" id="header-cart-count" style="display:none;">0</span>
             </a>
         </nav>
     </div>
