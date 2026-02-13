@@ -1,42 +1,39 @@
 ---
 interface Props {
-	title?: string;
-	description?: string;
+  title?: string;
+  description?: string;
 }
 
 const {
-	title = "Mundo Electrónico",
-	description = "Tienda online de componentes electrónicos: Arduino, sensores, resistencias y más.",
+  title = "Mundo Electrónico",
+  description = "Tienda online de componentes electrónicos: Arduino, sensores, resistencias y más.",
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="es">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content={description} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-			rel="stylesheet"
-		/>
-		<title>{title} | Mundo Electrónico</title>
-	</head>
-	<body>
-		<slot name="header" />
-		<main class="main-content">
-			<slot />
-		</main>
-		<slot name="footer" />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <title>{title} | Mundo Electrónico</title>
+  </head>
+  <body>
+    <slot name="header" />
+    <main class="main-content">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
 </html>
 
 <style>
-	.main-content {
-		flex: 1;
-		padding-top: var(--header-height);
-	}
+  .main-content {
+    flex: 1;
+    padding-top: var(--header-height);
+  }
 </style>
