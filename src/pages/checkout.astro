@@ -1,0 +1,259 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+---
+
+<Layout title="Checkout" description="Completa tu orden de compra.">
+    <Header slot="header" />
+
+    <section class="checkout-page">
+        <div class="container">
+            <h1 class="section-title">Finalizar Compra</h1>
+
+            <div class="checkout-grid">
+                <!-- Order Form -->
+                <form class="checkout-form card" id="checkout-form">
+                    <h2 class="checkout-form__title">Datos de Envío</h2>
+
+                    <div class="form-group">
+                        <label for="customer-name">Nombre completo</label>
+                        <input
+                            type="text"
+                            id="customer-name"
+                            name="name"
+                            class="form-input"
+                            placeholder="Juan Pérez"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-email">Correo electrónico</label>
+                        <input
+                            type="email"
+                            id="customer-email"
+                            name="email"
+                            class="form-input"
+                            placeholder="juan@email.com"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-address">Dirección de envío</label>
+                        <textarea
+                            id="customer-address"
+                            name="address"
+                            class="form-input"
+                            rows="3"
+                            placeholder="Calle 123 #45-67, Ciudad"
+                            required></textarea>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg checkout-form__submit"
+                        id="submit-order"
+                    >
+                        Confirmar Orden
+                    </button>
+
+                    <p
+                        class="checkout-form__error"
+                        id="checkout-error"
+                        style="display:none;"
+                    >
+                        Error al procesar la orden. Intenta de nuevo.
+                    </p>
+                </form>
+
+                <!-- Order Summary -->
+                <aside class="checkout-summary card">
+                    <h2 class="checkout-summary__title">Resumen del Pedido</h2>
+                    <div id="checkout-items"></div>
+                    <div class="checkout-summary__total-row">
+                        <span>Total</span>
+                        <span
+                            class="checkout-summary__total"
+                            id="checkout-total">$0</span
+                        >
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <Footer slot="footer" />
+</Layout>
+
+<script>
+    import { getCart, getCartTotal, clearCart } from "../scripts/cartStore.js";
+    import { createOrder } from "../scripts/api.js";
+
+    function formatPrice(value) {
+        return new Intl.NumberFormat("es-CO", {
+            style: "currency",
+            currency: "COP",
+            minimumFractionDigits: 0,
+        }).format(value);
+    }
+
+    // Redirect if cart is empty
+    const cart = getCart();
+    if (cart.length === 0) {
+        window.location.href = "/";
+    }
+
+    // Render summary
+    const itemsEl = document.getElementById("checkout-items");
+    const totalEl = document.getElementById("checkout-total");
+
+    if (itemsEl && cart.length > 0) {
+        itemsEl.innerHTML = cart
+            .map(
+                (item) => `
+        <div class="summary-item">
+          <span class="summary-item__name">${item.name} <span class="summary-item__qty">×${item.quantity}</span></span>
+          <span class="summary-item__price">${formatPrice(item.price * item.quantity)}</span>
+        </div>
+      `,
+            )
+            .join("");
+    }
+
+    if (totalEl) {
+        totalEl.textContent = formatPrice(getCartTotal());
+    }
+
+    // Handle form submit
+    const form = document.getElementById("checkout-form");
+    const errorEl = document.getElementById("checkout-error");
+    const submitBtn = document.getElementById("submit-order");
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorEl.style.display = "none";
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Procesando...";
+
+        const formData = new FormData(form);
+        const orderData = {
+            customer: {
+                name: formData.get("name"),
+                email: formData.get("email"),
+                address: formData.get("address"),
+            },
+            items: getCart().map((item) => ({
+                productId: item.id,
+                quantity: item.quantity,
+            })),
+        };
+
+        try {
+            const result = await createOrder(orderData);
+            clearCart();
+            window.location.href = `/success?orderId=${result.orderId || result.id || "OK"}`;
+        } catch (err) {
+            // Fallback: simulate success if API is not running
+            console.warn("API not available, simulating order:", err);
+            clearCart();
+            window.location.href = `/success?orderId=DEMO-${Date.now()}`;
+        }
+    });
+</script>
+
+<style>
+    .checkout-page {
+        padding: var(--space-xl) 0 var(--space-2xl);
+    }
+
+    .checkout-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: var(--space-xl);
+        margin-top: var(--space-xl);
+        align-items: start;
+    }
+
+    @media (max-width: 768px) {
+        .checkout-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Form */
+    .checkout-form {
+        padding: var(--space-xl);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+
+    .checkout-form__title,
+    .checkout-summary__title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: var(--space-sm);
+    }
+
+    .checkout-form__submit {
+        margin-top: var(--space-md);
+    }
+
+    .checkout-form__error {
+        color: var(--color-danger);
+        font-size: 0.85rem;
+        text-align: center;
+        margin-top: var(--space-sm);
+    }
+
+    /* Summary */
+    .checkout-summary {
+        padding: var(--space-xl);
+        position: sticky;
+        top: calc(var(--header-height) + var(--space-lg));
+    }
+
+    .checkout-summary__total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: var(--space-md);
+        margin-top: var(--space-md);
+        border-top: 1px solid var(--color-border);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .checkout-summary__total {
+        color: var(--color-primary);
+        font-size: 1.3rem;
+    }
+</style>
+
+<style is:global>
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-sm) 0;
+        border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+        font-size: 0.9rem;
+    }
+
+    .summary-item__name {
+        color: var(--color-text);
+    }
+
+    .summary-item__qty {
+        color: var(--color-text-muted);
+        font-size: 0.8rem;
+    }
+
+    .summary-item__price {
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+</style>

@@ -1,0 +1,112 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+const orderId = Astro.url.searchParams.get("orderId") || "N/A";
+---
+
+<Layout
+    title="¡Orden Confirmada!"
+    description="Tu orden ha sido creada exitosamente."
+>
+    <Header slot="header" />
+
+    <section class="success-page">
+        <div class="container">
+            <div class="success-card card animate-fadeInUp">
+                <div class="success-icon">✅</div>
+                <h1 class="success-title">¡Gracias por tu compra!</h1>
+                <p class="success-subtitle">
+                    Tu orden ha sido creada exitosamente.
+                </p>
+
+                <div class="success-order-id">
+                    <span class="success-order-id__label">ID de Orden</span>
+                    <span class="success-order-id__value">{orderId}</span>
+                </div>
+
+                <p class="success-message">
+                    Recibirás un correo de confirmación con los detalles de tu
+                    pedido. Nos pondremos en contacto contigo para coordinar el
+                    envío.
+                </p>
+
+                <a href="/" class="btn btn-primary btn-lg"
+                    >← Volver a la tienda</a
+                >
+            </div>
+        </div>
+    </section>
+
+    <Footer slot="footer" />
+</Layout>
+
+<style>
+    .success-page {
+        padding: var(--space-2xl) 0;
+        display: flex;
+        align-items: center;
+        min-height: 60vh;
+    }
+
+    .success-card {
+        max-width: 520px;
+        margin: 0 auto;
+        padding: var(--space-2xl);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .success-icon {
+        font-size: 3.5rem;
+        line-height: 1;
+    }
+
+    .success-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .success-subtitle {
+        color: var(--color-text-muted);
+        font-size: 1rem;
+    }
+
+    .success-order-id {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+        padding: var(--space-md) var(--space-xl);
+        background: var(--color-bg);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-border);
+    }
+
+    .success-order-id__label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted);
+        font-weight: 600;
+    }
+
+    .success-order-id__value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        font-family: var(--font-mono);
+    }
+
+    .success-message {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        max-width: 380px;
+    }
+</style>

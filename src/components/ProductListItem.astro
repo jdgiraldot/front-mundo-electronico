@@ -1,0 +1,267 @@
+---
+interface Props {
+    id: number;
+    name: string;
+    price: number;
+    imageUrl: string;
+    stock: number;
+    category?: string;
+    description?: string;
+}
+
+const { id, name, price, imageUrl, stock, category, description } = Astro.props;
+const formattedPrice = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+}).format(price);
+const inStock = stock > 0;
+---
+
+<div
+    class="product-list-item animate-fadeInUp"
+    data-product-id={id}
+    data-category={category}
+    data-name={name.toLowerCase()}
+>
+    <div class="product-list-item__container">
+        <a href={`/product/${id}`} class="product-list-item__image-link">
+            <div class="product-list-item__image-wrapper">
+                <img
+                    src={imageUrl || "/placeholder.svg"}
+                    alt={name}
+                    class="product-list-item__image"
+                    loading="lazy"
+                />
+                {
+                    !inStock && (
+                        <span class="product-list-item__badge-oos">
+                            Agotado
+                        </span>
+                    )
+                }
+            </div>
+        </a>
+
+        <div class="product-list-item__content">
+            <div class="product-list-item__header">
+                <div class="product-list-item__main-info">
+                    <span class="product-list-item__category"
+                        >{category || "General"}</span
+                    >
+                    <a href={`/product/${id}`} class="product-list-item__name"
+                        >{name}</a
+                    >
+                    <p class="product-list-item__description">{description}</p>
+                </div>
+
+                <div class="product-list-item__actions">
+                    <div class="product-list-item__price-block">
+                        <span class="product-list-item__price"
+                            >{formattedPrice}</span
+                        >
+                        <span
+                            class={`product-list-item__stock ${inStock ? "is-in-stock" : "is-out-of-stock"}`}
+                        >
+                            {
+                                inStock
+                                    ? `${stock} disponibles`
+                                    : "Sin existencias"
+                            }
+                        </span>
+                    </div>
+
+                    <button
+                        class="btn btn-primary product-list-item__add-btn"
+                        data-product={JSON.stringify({
+                            id,
+                            name,
+                            price,
+                            imageUrl,
+                        })}
+                        disabled={!inStock}
+                    >
+                        {inStock ? "Agregar al carrito" : "No disponible"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-list-item {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: all var(--transition-base);
+        margin-bottom: var(--space-md);
+    }
+
+    .product-list-item:hover {
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-md);
+        transform: translateX(4px);
+    }
+
+    .product-list-item__container {
+        display: flex;
+        align-items: stretch;
+        min-height: 160px;
+    }
+
+    .product-list-item__image-link {
+        flex: 0 0 200px;
+        text-decoration: none;
+    }
+
+    .product-list-item__image-wrapper {
+        position: relative;
+        height: 100%;
+        background: var(--color-bg);
+        overflow: hidden;
+    }
+
+    .product-list-item__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--transition-base);
+    }
+
+    .product-list-item:hover .product-list-item__image {
+        transform: scale(1.05);
+    }
+
+    .product-list-item__badge-oos {
+        position: absolute;
+        top: var(--space-sm);
+        left: var(--space-sm);
+        padding: 4px 12px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        background: var(--color-danger);
+        color: #fff;
+        border-radius: var(--radius-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .product-list-item__content {
+        flex: 1;
+        padding: var(--space-lg);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-list-item__header {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-xl);
+        height: 100%;
+    }
+
+    .product-list-item__main-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .product-list-item__category {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--color-primary);
+        letter-spacing: 0.05em;
+    }
+
+    .product-list-item__name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-text);
+        text-decoration: none;
+        line-height: 1.2;
+    }
+
+    .product-list-item__name:hover {
+        color: var(--color-primary);
+    }
+
+    .product-list-item__description {
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+        line-height: 1.5;
+        margin-top: var(--space-xs);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .product-list-item__actions {
+        flex: 0 0 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+        gap: var(--space-md);
+        border-left: 1px solid var(--color-border);
+        padding-left: var(--space-xl);
+    }
+
+    .product-list-item__price-block {
+        text-align: right;
+    }
+
+    .product-list-item__price {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--color-text);
+    }
+
+    .product-list-item__stock {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .is-in-stock {
+        color: var(--color-success);
+    }
+    .is-out-of-stock {
+        color: var(--color-danger);
+    }
+
+    .product-list-item__add-btn {
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .product-list-item__container {
+            flex-direction: column;
+        }
+        .product-list-item__image-link {
+            flex: 0 0 160px;
+        }
+        .product-list-item__header {
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        .product-list-item__actions {
+            flex: 0 0 auto;
+            border-left: none;
+            padding-left: 0;
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--color-border);
+            align-items: stretch;
+        }
+        .product-list-item__price-block {
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+</style>

@@ -1,0 +1,130 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<header class="header">
+    <div class="header-inner container">
+        <a href="/" class="logo" id="logo">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text"
+                >Mundo<span class="logo-accent">Electrónico</span></span
+            >
+        </a>
+
+        <nav class="nav" id="main-nav">
+            <a
+                href="/"
+                class:list={["nav-link", { active: currentPath === "/" }]}
+                >Productos</a
+            >
+            <a
+                href="/cart"
+                class:list={["nav-link", { active: currentPath === "/cart" }]}
+                id="nav-cart-link"
+            >
+                🛒 Carrito
+                <span
+                    class="badge cart-count"
+                    id="header-cart-count"
+                    style="display:none;">0</span
+                >
+            </a>
+        </nav>
+    </div>
+</header>
+
+<script>
+    import { getCartCount } from "../scripts/cartStore.js";
+
+    function updateCartBadge() {
+        const count = getCartCount();
+        const badge = document.getElementById("header-cart-count");
+        if (badge) {
+            badge.textContent = count.toString();
+            badge.style.display = count > 0 ? "inline-flex" : "none";
+        }
+    }
+
+    updateCartBadge();
+    window.addEventListener("cart-updated", updateCartBadge);
+</script>
+
+<style>
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-height);
+        background: rgba(11, 15, 25, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--color-border);
+        z-index: 100;
+    }
+
+    .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        text-decoration: none;
+        color: var(--color-text);
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    .logo-icon {
+        font-size: 1.4rem;
+    }
+
+    .logo-accent {
+        color: var(--color-primary);
+    }
+
+    .nav {
+        display: flex;
+        align-items: center;
+        gap: var(--space-lg);
+    }
+
+    .nav-link {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: var(--space-sm) 0;
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color var(--transition-fast);
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        color: var(--color-primary);
+    }
+
+    .nav-link.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--color-primary);
+        border-radius: 1px;
+    }
+
+    .cart-count {
+        position: relative;
+        top: -1px;
+    }
+</style>

@@ -1,0 +1,146 @@
+---
+interface Props {
+    id: number;
+    name: string;
+    price: number;
+    imageUrl: string;
+    stock: number;
+}
+
+const { id, name, price, imageUrl, stock } = Astro.props;
+const formattedPrice = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+}).format(price);
+const inStock = stock > 0;
+---
+
+<article class="product-card card animate-fadeInUp" data-product-id={id}>
+    <a href={`/product/${id}`} class="product-card__image-link">
+        <div class="product-card__image-wrapper">
+            <img
+                src={imageUrl || "/placeholder.svg"}
+                alt={name}
+                class="product-card__image"
+                loading="lazy"
+            />
+            {!inStock && <span class="product-card__badge-oos">Agotado</span>}
+        </div>
+    </a>
+
+    <div class="product-card__body">
+        <a href={`/product/${id}`} class="product-card__name">{name}</a>
+        <div class="product-card__footer">
+            <span class="product-card__price">{formattedPrice}</span>
+            <button
+                class="btn btn-primary btn-sm product-card__add-btn"
+                data-product={JSON.stringify({ id, name, price, imageUrl })}
+                disabled={!inStock}
+                id={`add-to-cart-${id}`}
+            >
+                {inStock ? "+ Agregar" : "Sin stock"}
+            </button>
+        </div>
+    </div>
+</article>
+
+<script>
+    import { addToCart } from "../scripts/cartStore.js";
+
+    document.querySelectorAll(".product-card__add-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const product = JSON.parse(btn.getAttribute("data-product"));
+            addToCart(product);
+
+            // Visual feedback
+            const original = btn.textContent;
+            btn.textContent = "✓ Agregado";
+            btn.style.pointerEvents = "none";
+            setTimeout(() => {
+                btn.textContent = original;
+                btn.style.pointerEvents = "";
+            }, 1000);
+        });
+    });
+</script>
+
+<style>
+    .product-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card__image-link {
+        text-decoration: none;
+    }
+
+    .product-card__image-wrapper {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        background: var(--color-bg);
+        overflow: hidden;
+    }
+
+    .product-card__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--transition-base);
+    }
+
+    .product-card:hover .product-card__image {
+        transform: scale(1.05);
+    }
+
+    .product-card__badge-oos {
+        position: absolute;
+        top: var(--space-sm);
+        right: var(--space-sm);
+        padding: 2px 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--color-danger);
+        color: #fff;
+        border-radius: var(--radius-full);
+    }
+
+    .product-card__body {
+        padding: var(--space-md);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        flex: 1;
+    }
+
+    .product-card__name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--color-text);
+        text-decoration: none;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .product-card__name:hover {
+        color: var(--color-primary);
+    }
+
+    .product-card__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        gap: var(--space-sm);
+    }
+
+    .product-card__price {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--color-primary);
+    }
+</style>

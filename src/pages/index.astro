@@ -1,11 +1,373 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ProductListItem from "../components/ProductListItem.astro";
+import "../styles/global.css";
+import { demoProducts } from "../data/products.js";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+interface Product {
+	id: number;
+	name: string;
+	price: number;
+	imageUrl: string;
+	stock: number;
+	category: string;
+	description: string;
+}
+
+// Fetch products from API — fallback to demo data if API is not running
+let products: Product[] = [];
+try {
+	const res = await fetch("http://localhost:5290/api/products");
+	if (res.ok) {
+		products = await res.json();
+	} else {
+		products = demoProducts;
+	}
+} catch {
+	products = demoProducts;
+}
+
+// Extract unique categories
+const categories = [
+	"Todos",
+	...new Set(products.map((p: Product) => p.category || "General")),
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout
+	title="Catálogo"
+	description="Explora nuestro catálogo de componentes electrónicos por categoría."
+>
+	<Header slot="header" />
+
+	<section class="hero">
+		<div class="container">
+			<h1 class="hero__title">
+				Componentes <span class="hero__accent">Electrónicos</span>
+			</h1>
+			<p class="hero__subtitle">
+				Busca y filtra lo que necesitas para tu próximo gran invento.
+			</p>
+		</div>
+	</section>
+
+	<section class="catalog-controls">
+		<div class="container">
+			<div class="controls-wrapper">
+				<div class="search-box">
+					<span class="search-icon">🔍</span>
+					<input
+						type="text"
+						id="product-search"
+						placeholder="Buscar por nombre..."
+						class="search-input"
+					/>
+				</div>
+
+				<div class="category-filters">
+					{
+						categories.map((cat) => (
+							<button
+								class="filter-btn"
+								data-category={cat === "Todos" ? "all" : cat}
+								class:list={[
+									{ "is-active": cat === "Todos" },
+									"filter-btn",
+								]}
+							>
+								{cat}
+							</button>
+						))
+					}
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="catalog" id="catalog">
+		<div class="container" id="products-container">
+			{
+				categories
+					.filter((c: string) => c !== "Todos")
+					.map((category: string) => (
+						<div class="category-section" data-cat-name={category}>
+							<h2 class="category-title">{category}</h2>
+							<div class="category-list">
+								{products
+									.filter(
+										(p: Product) =>
+											(p.category || "General") ===
+											category,
+									)
+									.map((p: Product) => (
+										<ProductListItem
+											id={p.id}
+											name={p.name}
+											price={p.price}
+											imageUrl={p.imageUrl}
+											stock={p.stock}
+											category={p.category}
+											description={p.description}
+										/>
+									))}
+							</div>
+						</div>
+					))
+			}
+
+			{
+				products.length === 0 && (
+					<p class="catalog__empty">No se encontraron productos.</p>
+				)
+			}
+		</div>
+	</section>
+
+	<Footer slot="footer" />
 </Layout>
+
+<script>
+	import { addToCart } from "../scripts/cartStore.js";
+
+	// Setup Filtering Logic
+	const searchInput = document.getElementById(
+		"product-search",
+	) as HTMLInputElement;
+	const filterBtns = document.querySelectorAll(".filter-btn");
+	const productItems = document.querySelectorAll(".product-list-item");
+	const categorySections = document.querySelectorAll(".category-section");
+
+	function filterProducts() {
+		const searchTerm = searchInput.value.toLowerCase();
+		const activeCategory = document
+			.querySelector(".filter-btn.is-active")
+			?.getAttribute("data-category");
+
+		productItems.forEach((item) => {
+			const name = item.getAttribute("data-name") || "";
+			const category = item.getAttribute("data-category") || "General";
+
+			const matchesSearch = name.includes(searchTerm);
+			const matchesCategory =
+				activeCategory === "all" || category === activeCategory;
+
+			if (matchesSearch && matchesCategory) {
+				(item as HTMLElement).style.display = "block";
+			} else {
+				(item as HTMLElement).style.display = "none";
+			}
+		});
+
+		// Hide categories if they have no visible products
+		categorySections.forEach((section) => {
+			const hasVisibleItems = Array.from(
+				section.querySelectorAll(".product-list-item"),
+			).some((item) => (item as HTMLElement).style.display !== "none");
+			(section as HTMLElement).style.display = hasVisibleItems
+				? "block"
+				: "none";
+		});
+	}
+
+	searchInput?.addEventListener("input", filterProducts);
+
+	filterBtns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			filterBtns.forEach((b) => b.classList.remove("is-active"));
+			btn.classList.add("is-active");
+			filterProducts();
+		});
+	});
+
+	// Setup Add to Cart buttons (since they are now in ProductListItem)
+	function setupAddToCart() {
+		document
+			.querySelectorAll(".product-list-item__add-btn")
+			.forEach((btn) => {
+				btn.addEventListener("click", (e) => {
+					const button = btn as HTMLButtonElement;
+					const product = JSON.parse(
+						button.getAttribute("data-product") || "{}",
+					);
+					addToCart(product);
+
+					const original = button.textContent;
+					button.textContent = "✓ Agregado";
+					button.classList.add("btn-success");
+					button.style.pointerEvents = "none";
+					setTimeout(() => {
+						button.textContent = original;
+						button.classList.remove("btn-success");
+						button.style.pointerEvents = "";
+					}, 1000);
+				});
+			});
+	}
+
+	setupAddToCart();
+</script>
+
+<style>
+	/* ─── Hero ────────────────────────────────────────────────────────── */
+	.hero {
+		padding: var(--space-xl) 0 var(--space-lg);
+		text-align: center;
+	}
+
+	.hero__title {
+		font-size: clamp(1.8rem, 5vw, 2.8rem);
+		font-weight: 800;
+		letter-spacing: -0.03em;
+		line-height: 1.1;
+	}
+
+	.hero__accent {
+		background: linear-gradient(
+			135deg,
+			var(--color-primary),
+			var(--color-accent)
+		);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.hero__subtitle {
+		margin-top: var(--space-sm);
+		color: var(--color-text-muted);
+		font-size: 1.05rem;
+		max-width: 480px;
+		margin-inline: auto;
+	}
+
+	/* ─── Controls ────────────────────────────────────────────────────── */
+	.catalog-controls {
+		background: var(--color-surface);
+		padding: var(--space-lg) 0;
+		border-top: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--color-border);
+		position: sticky;
+		top: 60px; /* Adjust based on header height */
+		z-index: 10;
+		backdrop-filter: blur(8px);
+	}
+
+	.controls-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-md);
+	}
+
+	.search-box {
+		position: relative;
+		max-width: 500px;
+	}
+
+	.search-icon {
+		position: absolute;
+		left: var(--space-md);
+		top: 50%;
+		transform: translateY(-50%);
+		opacity: 0.5;
+	}
+
+	.search-input {
+		width: 100%;
+		padding: var(--space-sm) var(--space-md) var(--space-sm)
+			var(--space-3xl);
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-full);
+		font-size: 1rem;
+		transition: all var(--transition-base);
+	}
+
+	.search-input:focus {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+		outline: none;
+	}
+
+	.category-filters {
+		display: flex;
+		gap: var(--space-xs);
+		overflow-x: auto;
+		padding-bottom: var(--space-xs);
+		scrollbar-width: none;
+	}
+
+	.category-filters::-webkit-scrollbar {
+		display: none;
+	}
+
+	.filter-btn {
+		padding: 6px 16px;
+		border-radius: var(--radius-full);
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: all var(--transition-fast);
+		color: var(--color-text-muted);
+	}
+
+	.filter-btn:hover {
+		border-color: var(--color-primary);
+		color: var(--color-primary);
+	}
+
+	.filter-btn.is-active {
+		background: var(--color-primary);
+		border-color: var(--color-primary);
+		color: #fff;
+	}
+
+	/* ─── Catalog ────────────────────────────────────────────────────── */
+	.catalog {
+		padding: var(--space-xl) 0 var(--space-2xl);
+	}
+
+	.category-section {
+		margin-bottom: var(--space-2xl);
+	}
+
+	.category-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: var(--space-lg);
+		display: flex;
+		align-items: center;
+		gap: var(--space-md);
+	}
+
+	.category-title::after {
+		content: "";
+		flex: 1;
+		height: 1px;
+		background: linear-gradient(to right, var(--color-border), transparent);
+	}
+
+	.category-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-md);
+	}
+
+	.catalog__empty {
+		text-align: center;
+		color: var(--color-text-muted);
+		padding: var(--space-2xl);
+	}
+
+	@media (min-width: 768px) {
+		.controls-wrapper {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+		}
+	}
+</style>

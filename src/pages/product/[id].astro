@@ -1,0 +1,217 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import "../../styles/global.css";
+import { demoProducts } from "../../data/products.js";
+
+export function getStaticPaths() {
+    // Import inside getStaticPaths for build-time usage
+    const products = demoProducts;
+    return products.map((p) => ({
+        params: { id: String(p.id) },
+        props: { product: p },
+    }));
+}
+
+const { product } = Astro.props;
+
+const formattedPrice = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+}).format(product.price);
+const inStock = product.stock > 0;
+---
+
+<Layout title={product.name} description={product.description}>
+    <Header slot="header" />
+
+    <section class="product-detail">
+        <div class="container">
+            <a href="/" class="back-link" id="back-to-catalog"
+                >← Volver al catálogo</a
+            >
+
+            <div class="product-detail__grid">
+                <div class="product-detail__image-wrapper">
+                    <img
+                        src={product.imageUrl || "/placeholder.svg"}
+                        alt={product.name}
+                        class="product-detail__image"
+                    />
+                </div>
+
+                <div class="product-detail__info">
+                    <span class="product-detail__category"
+                        >{product.category || "General"}</span
+                    >
+                    <h1 class="product-detail__name">{product.name}</h1>
+
+                    <div class="product-detail__price-row">
+                        <span class="product-detail__price"
+                            >{formattedPrice}</span
+                        >
+                        <span
+                            class:list={[
+                                "product-detail__stock",
+                                { "in-stock": inStock, "out-stock": !inStock },
+                            ]}
+                        >
+                            {inStock ? `${product.stock} en stock` : "Agotado"}
+                        </span>
+                    </div>
+
+                    <p class="product-detail__description">
+                        {product.description}
+                    </p>
+
+                    <button
+                        class="btn btn-primary btn-lg product-detail__add-btn"
+                        id="detail-add-to-cart"
+                        data-product={JSON.stringify({
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            imageUrl: product.imageUrl,
+                        })}
+                        disabled={!inStock}
+                    >
+                        {
+                            inStock
+                                ? "🛒 Agregar al Carrito"
+                                : "Sin stock disponible"
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <Footer slot="footer" />
+</Layout>
+
+<script>
+    import { addToCart } from "../../scripts/cartStore.js";
+
+    const btn = document.getElementById("detail-add-to-cart");
+    if (btn) {
+        btn.addEventListener("click", () => {
+            const product = JSON.parse(btn.getAttribute("data-product"));
+            addToCart(product);
+
+            const original = btn.innerHTML;
+            btn.innerHTML = "✓ Agregado al carrito";
+            btn.style.pointerEvents = "none";
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.style.pointerEvents = "";
+            }, 1200);
+        });
+    }
+</script>
+
+<style>
+    .product-detail {
+        padding: var(--space-xl) 0 var(--space-2xl);
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: var(--space-lg);
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+        transition: color var(--transition-fast);
+    }
+
+    .back-link:hover {
+        color: var(--color-primary);
+    }
+
+    .product-detail__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2xl);
+        align-items: start;
+    }
+
+    @media (max-width: 768px) {
+        .product-detail__grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .product-detail__image-wrapper {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .product-detail__image {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
+    .product-detail__info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+
+    .product-detail__category {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--color-primary);
+        letter-spacing: 0.05em;
+    }
+
+    .product-detail__name {
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+
+    .product-detail__price-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .product-detail__price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-primary);
+    }
+
+    .product-detail__stock {
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: var(--radius-full);
+    }
+
+    .product-detail__stock.in-stock {
+        background: rgba(52, 211, 153, 0.12);
+        color: var(--color-success);
+    }
+
+    .product-detail__stock.out-stock {
+        background: rgba(248, 113, 113, 0.12);
+        color: var(--color-danger);
+    }
+
+    .product-detail__description {
+        color: var(--color-text-muted);
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .product-detail__add-btn {
+        margin-top: var(--space-md);
+        width: fit-content;
+    }
+</style>
