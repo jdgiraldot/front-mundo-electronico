@@ -1,13 +1,20 @@
 ---
 import type { Product } from "@/types/product";
-interface Props { product: Product; }
+interface Props {
+    product: Product;
+}
 
 const { product } = Astro.props;
-const formattedPrice = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0, }).format(product.price);
+const formattedPrice = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+}).format(product.price);
 const inStock = product.stock > 0;
 ---
 
-<div class="product-list-item"
+<div
+    class="product-list-item"
     data-product-id={product.id}
     data-category={product.category}
     data-name={product.name.toLowerCase()}
@@ -15,11 +22,11 @@ const inStock = product.stock > 0;
     <div class="product-list-item__name">
         <a href={`/product/${product.id}`}>{product.name}</a>
     </div>
-    
+
     <div class="product-list-item__sku">
         {product.sku}
     </div>
-    
+
     <div class="product-list-item__price">
         {formattedPrice}
     </div>
@@ -27,14 +34,14 @@ const inStock = product.stock > 0;
     <div class="product-list-item__action">
         <button
             class="product-list-item__add-btn"
-                data-product={JSON.stringify({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    imageUrl: product.imageUrl,
-                })}
-                disabled={!inStock}
-                title={inStock ? "Agregar al carrito" : "Sin existencias"}
+            data-product={JSON.stringify({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                imageUrl: product.imageUrl,
+            })}
+            disabled={!inStock}
+            title={inStock ? "Agregar al carrito" : "Sin existencias"}
             >+
         </button>
     </div>
@@ -47,13 +54,13 @@ const inStock = product.stock > 0;
         gap: var(--space-sm);
         align-items: center;
         padding: var(--space-sm) var(--space-md);
-        background: var(--color-surface);
+        background: transparent;
         border-bottom: 1px solid var(--color-border);
         transition: background-color var(--transition-base);
     }
 
     .product-list-item:hover {
-        background: var(--color-bg);
+        background: var(--color-surface);
     }
 
     .product-list-item__name {
@@ -97,11 +104,16 @@ const inStock = product.stock > 0;
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        border: 2px solid var(--color-primary);
-        background: var(--color-primary);
-        color: white;
+        border: none;
+        background: linear-gradient(
+            135deg,
+            var(--color-primary),
+            var(--color-accent)
+        );
+        box-shadow: var(--shadow-glow);
+        color: #0b0f19;
         font-size: 1.25rem;
-        font-weight: 300;
+        font-weight: 400;
         cursor: pointer;
         transition: all var(--transition-base);
         display: flex;
@@ -112,9 +124,8 @@ const inStock = product.stock > 0;
     }
 
     .product-list-item__add-btn:hover:not(:disabled) {
-        background: var(--color-primary-dark, #0056b3);
-        border-color: var(--color-primary-dark, #0056b3);
-        transform: scale(1.05);
+        transform: translateY(-1px) scale(1.05);
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
     }
 
     .product-list-item__add-btn:active:not(:disabled) {
@@ -123,7 +134,7 @@ const inStock = product.stock > 0;
 
     .product-list-item__add-btn:disabled {
         background: var(--color-border);
-        border-color: var(--color-border);
+        box-shadow: none;
         color: var(--color-text-muted);
         cursor: not-allowed;
         opacity: 0.5;
@@ -152,9 +163,9 @@ const inStock = product.stock > 0;
         }
 
         .product-list-item__add-btn {
-            width: 36px;
-            height: 36px;
-            font-size: 1.25rem;
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
         }
     }
 </style>

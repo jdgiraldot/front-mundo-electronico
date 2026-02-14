@@ -32,54 +32,87 @@ import "@/styles/global.css";
   <section id="info" class="info">
     <div class="container">
       <h2 class="section-title">¿Por qué Mundo Electrónico?</h2>
-      
+
       <div class="grid">
         <article class="card">
           <div class="card__icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 7h-9"/>
-              <path d="M14 17H5"/>
-              <circle cx="17" cy="17" r="3"/>
-              <circle cx="7" cy="7" r="3"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 7h-9"></path>
+              <path d="M14 17H5"></path>
+              <circle cx="17" cy="17" r="3"></circle>
+              <circle cx="7" cy="7" r="3"></circle>
             </svg>
           </div>
           <h3>Sobre nosotros</h3>
           <p>
-            Somos una tienda especializada en componentes electrónicos ubicada en
-            Ibagué, Calle 17 # 4 - 32. Atendemos estudiantes, técnicos y
-            desarrolladores que buscan calidad, disponibilidad y asesoría confiable.
+            Somos una tienda especializada en componentes electrónicos ubicada
+            en Ibagué, Calle 17 # 4 - 32. Atendemos estudiantes, técnicos y
+            desarrolladores que buscan calidad, disponibilidad y asesoría
+            confiable.
           </p>
         </article>
 
         <article class="card">
           <div class="card__icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1"/>
-              <circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              ></path>
             </svg>
           </div>
           <h3>Cómo comprar</h3>
           <p>
-            Explora el catálogo, agrega los productos al carrito y finaliza tu pedido
-            en minutos. Puedes recoger en nuestra tienda física o solicitar envío a
-            domicilio. Los tiempos y costos varían según la distancia.
+            Explora el catálogo, agrega los productos al carrito y finaliza tu
+            pedido en minutos. Puedes recoger en nuestra tienda física o
+            solicitar envío a domicilio. Los tiempos y costos varían según la
+            distancia.
           </p>
         </article>
 
         <article class="card">
           <div class="card__icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
             </svg>
           </div>
           <h3>Por qué elegirnos</h3>
           <p>
-            Precios claros y productos seleccionados para proyectos
-            reales de prototipado, reparación y aprendizaje técnico. Compra con
-            confianza.
+            Precios claros y productos seleccionados para proyectos reales de
+            prototipado, reparación y aprendizaje técnico. Compra con confianza.
           </p>
         </article>
       </div>
@@ -120,7 +153,9 @@ import "@/styles/global.css";
           <h2>Empieza hoy tu próximo proyecto</h2>
           <p>Encuentra todos los componentes que necesitas en un solo lugar</p>
         </div>
-        <a href="/catalog" class="btn btn-primary btn-large">Ver catálogo completo</a>
+        <a href="/catalog" class="btn btn-primary btn-large"
+          >Ver catálogo completo</a
+        >
       </div>
     </div>
   </section>
@@ -174,81 +209,22 @@ import "@/styles/global.css";
     flex-wrap: wrap;
   }
 
-  /* Buttons */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    border: 1px solid transparent;
-    transition: all var(--transition-fast);
-    cursor: pointer;
-  }
-
-  .btn-large {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-
-  .btn-primary {
-    background: var(--color-primary);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
-  }
-
-  .btn-secondary {
-    border-color: var(--color-border);
-    color: var(--color-text);
-    background: var(--color-surface);
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: rgba(56, 189, 248, 0.05);
-  }
-
   /* Info Section */
   .info {
     padding: clamp(3rem, 10vh, 6rem) 0;
-    background: var(--color-background);
   }
 
-  .section-title {
-    text-align: center;
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 700;
-    margin-bottom: clamp(2.5rem, 6vh, 4rem);
-    color: var(--color-text);
-  }
-
+  /* Using global .grid utility? No, let's keep this specific grid for now but maybe rename or keep simple */
   .grid {
     display: grid;
     gap: clamp(1.5rem, 4vw, 2rem);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   }
 
-  .card {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    padding: clamp(1.75rem, 4vw, 2.5rem);
-    transition: all var(--transition-fast);
-  }
+  /* .card is now global */
 
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    border-color: rgba(56, 189, 248, 0.3);
+  .card {
+    padding: clamp(1.75rem, 4vw, 2.5rem);
   }
 
   .card__icon {
@@ -257,7 +233,11 @@ import "@/styles/global.css";
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0.05));
+    background: linear-gradient(
+      135deg,
+      rgba(56, 189, 248, 0.1),
+      rgba(56, 189, 248, 0.05)
+    );
     border-radius: var(--radius-md);
     color: var(--color-primary);
     margin-bottom: 1.25rem;
@@ -375,10 +355,5 @@ import "@/styles/global.css";
       max-width: 300px;
       margin: 0 auto;
     }
-  }
-
-  /* Smooth scroll */
-  html {
-    scroll-behavior: smooth;
   }
 </style>
