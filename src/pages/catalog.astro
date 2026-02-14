@@ -4,36 +4,20 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import ProductListItem from "@/components/ProductListItem.astro";
 import "@/styles/global.css";
-import { demoProducts } from "@/data/products.js";
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-  stock: number;
-  category: string;
-  description: string;
-}
+import { defaultProducts } from "@/data/products.js";
+import type { Product } from "@/types/product";
 
 const API_URL = import.meta.env.PUBLIC_API_URL;
 
-let products: Product[] = [];
+let products: Product[] = defaultProducts;
+
 try {
   const res = await fetch(`${API_URL}/products`);
-  if (res.ok) {
-    products = await res.json();
-  } else {
-    products = demoProducts;
-  }
-} catch {
-  products = demoProducts;
-}
+  if (res.ok) products = await res.json();
+} catch {}
 
-const categories = [
-  "Todos",
-  ...new Set(products.map((p: Product) => p.category || "General")),
-];
+const categories = [ "Todos", ...new Set(products.map(p => p.category || "General")) ];
 ---
 
 <Layout
@@ -87,13 +71,7 @@ const categories = [
                   )
                   .map((p: Product) => (
                     <ProductListItem
-                      id={p.id}
-                      name={p.name}
-                      price={p.price}
-                      imageUrl={p.imageUrl}
-                      stock={p.stock}
-                      category={p.category}
-                      description={p.description}
+                      product={p}
                     />
                   ))}
               </div>
@@ -171,7 +149,6 @@ const categories = [
         addToCart(product);
 
         const original = button.textContent;
-        button.textContent = "Agregado";
         button.classList.add("btn-success");
         button.style.pointerEvents = "none";
         setTimeout(() => {
@@ -188,14 +165,11 @@ const categories = [
 
 <style>
   .catalog-controls {
-    background: var(--color-surface);
-    padding: var(--space-lg) 0;
-    border-top: 1px solid var(--color-border);
+    background: var(--color-bg);
+    padding: var(--space-md) 0;
     border-bottom: 1px solid var(--color-border);
     position: sticky;
-    top: 60px;
-    z-index: 10;
-    backdrop-filter: blur(8px);
+    top: var(--header-height);
   }
 
   .controls-wrapper {
@@ -206,25 +180,33 @@ const categories = [
 
   .search-box {
     position: relative;
-    max-width: 500px;
+    max-width: 300px;
+    width: 100%;
   }
 
   .search-icon {
     position: absolute;
-    left: var(--space-md);
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    opacity: 0.5;
+    opacity: 0.6;
+    pointer-events: none;
   }
 
   .search-input {
     width: 100%;
-    padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-3xl);
+    height: 40px;
+    padding: 0 16px 0 48px;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-full);
     font-size: 1rem;
+    color: var(--color-text);
     transition: all var(--transition-base);
+  }
+
+  .search-input::placeholder {
+    color: var(--color-text-muted);
   }
 
   .search-input:focus {
@@ -270,7 +252,7 @@ const categories = [
   }
 
   .catalog {
-    padding: var(--space-xl) 0 var(--space-2xl);
+    padding: var(--space-2xl) 0 var(--space-2xl);
   }
 
   .category-section {
@@ -296,7 +278,7 @@ const categories = [
   .category-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 0;
   }
 
   .catalog__empty {

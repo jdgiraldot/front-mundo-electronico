@@ -1,9 +1,9 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import "../../styles/global.css";
-import { demoProducts } from "../../data/products.js";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import "@/styles/global.css";
+import { demoProducts } from "@/data/products.js";
 
 export function getStaticPaths() {
     // Import inside getStaticPaths for build-time usage
@@ -24,7 +24,7 @@ const formattedPrice = new Intl.NumberFormat("es-CO", {
 const inStock = product.stock > 0;
 ---
 
-<Layout title={product.name} description={product.description}>
+<Layout title={product.name} description={product.sku}>
     <Header slot="header" />
 
     <section class="product-detail">
@@ -63,7 +63,7 @@ const inStock = product.stock > 0;
                     </div>
 
                     <p class="product-detail__description">
-                        {product.description}
+                        {product.sku}
                     </p>
 
                     <button
@@ -79,7 +79,7 @@ const inStock = product.stock > 0;
                     >
                         {
                             inStock
-                                ? "🛒 Agregar al Carrito"
+                                ? "Agregar al Carrito"
                                 : "Sin stock disponible"
                         }
                     </button>
