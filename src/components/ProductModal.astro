@@ -1,0 +1,174 @@
+---
+import "@/styles/global.css";
+---
+
+<dialog id="product-modal" class="product-modal">
+    <div class="product-modal__content">
+        <button
+            id="close-modal"
+            class="product-modal__close"
+            aria-label="Cerrar"><b>✕</b></button
+        >
+
+        <div class="product-modal__grid">
+            <div class="product-modal__image-wrapper">
+                <img
+                    id="modal-image"
+                    src=""
+                    alt=""
+                    class="product-modal__image"
+                />
+            </div>
+
+            <div class="product-modal__info">
+                <span id="modal-category" class="product-modal__category"
+                ></span>
+                <h2 id="modal-name" class="product-modal__name"></h2>
+
+                <div class="product-modal__price-row">
+                    <span id="modal-price" class="product-modal__price"></span>
+                    <span id="modal-stock" class="product-modal__stock"></span>
+                </div>
+
+                <p id="modal-description" class="product-modal__description">
+                </p>
+
+                <button
+                    id="modal-add-to-cart"
+                    class="btn btn-primary btn-lg product-modal__add-btn"
+                >
+                    Agregar al Carrito
+                </button>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<style>
+    .product-modal {
+        padding: 0;
+        border: none;
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-lg);
+        max-width: 900px;
+        width: 90%;
+        margin: auto;
+        color: var(--color-text);
+    }
+
+    .product-modal::backdrop {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+    }
+
+    .product-modal__content {
+        position: relative;
+        padding: var(--space-xl);
+    }
+
+    .product-modal__close {
+        position: absolute;
+        top: var(--space-md);
+        right: var(--space-md);
+        background: none;
+        border: none;
+        color: var(--color-text-muted);
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 10;
+        transition: color var(--transition-fast);
+    }
+
+    .product-modal__close:hover {
+        color: var(--color-danger);
+    }
+
+    .product-modal__grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: var(--space-xl);
+        align-items: start;
+    }
+
+    .product-modal__image-wrapper {
+        background: var(--color-bg);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid var(--color-border);
+    }
+
+    .product-modal__image {
+        width: 100%;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        display: block;
+    }
+
+    .product-modal__info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+
+    .product-modal__category {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--color-primary);
+        letter-spacing: 0.05em;
+    }
+
+    .product-modal__name {
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .product-modal__price-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .product-modal__price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-primary);
+    }
+
+    .product-modal__stock {
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: var(--radius-full);
+    }
+
+    .product-modal__stock.in-stock {
+        background: rgba(52, 211, 153, 0.12);
+        color: var(--color-success);
+    }
+
+    .product-modal__stock.out-stock {
+        background: rgba(248, 113, 113, 0.12);
+        color: var(--color-danger);
+    }
+
+    .product-modal__description {
+        color: var(--color-text-muted);
+        font-size: 1rem;
+        line-height: 1.6;
+        font-family: var(--font-mono);
+    }
+
+    @media (max-width: 768px) {
+        .product-modal__grid {
+            grid-template-columns: 1fr;
+        }
+
+        .product-modal__name {
+            font-size: 1.4rem;
+        }
+    }
+</style>

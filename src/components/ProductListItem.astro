@@ -18,9 +18,10 @@ const inStock = product.stock > 0;
     data-product-id={product.id}
     data-category={product.category}
     data-name={product.name.toLowerCase()}
+    data-json={JSON.stringify(product)}
 >
     <div class="product-list-item__name">
-        <a href={`/product/${product.id}`}>{product.name}</a>
+        <span class="product-link">{product.name}</span>
     </div>
 
     <div class="product-list-item__sku">
@@ -57,6 +58,7 @@ const inStock = product.stock > 0;
         background: transparent;
         border-bottom: 1px solid var(--color-border);
         transition: background-color var(--transition-base);
+        cursor: pointer;
     }
 
     .product-list-item:hover {
@@ -69,13 +71,13 @@ const inStock = product.stock > 0;
         color: var(--color-text);
     }
 
-    .product-list-item__name a {
+    .product-link {
         color: var(--color-text);
         text-decoration: none;
         transition: color var(--transition-base);
     }
 
-    .product-list-item__name a:hover {
+    .product-list-item:hover .product-link {
         color: var(--color-primary);
     }
 

@@ -467,8 +467,36 @@ select {
 
 @media (max-width: 768px) {
   .cart-item {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr auto;
     gap: var(--space-sm);
+    padding: var(--space-md) 0;
+  }
+
+  .cart-item__product {
+    grid-column: 1 / 2;
+    grid-row: 1;
+  }
+
+  .cart-item__remove {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+  }
+
+  .cart-item__qty {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+    margin-top: var(--space-xs);
+  }
+
+  .cart-item__subtotal {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+    align-self: center;
+    font-size: 1rem;
   }
 
   .cart-item__price {

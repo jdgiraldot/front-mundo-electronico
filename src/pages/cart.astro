@@ -95,7 +95,7 @@ import "@/styles/global.css";
         <div class="cart-item" data-id="${item.id}">
           <div class="cart-item__product">
             <img src="${item.imageUrl || "/placeholder.svg"}" alt="${item.name}" class="cart-item__img" />
-            <a href="/product/${item.id}" class="cart-item__name">${item.name}</a>
+            <span class="cart-item__name">${item.name}</span>
           </div>
           <span class="cart-item__price">${formatPrice(item.price)}</span>
           <div class="cart-item__qty">

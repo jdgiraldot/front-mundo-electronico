@@ -6,27 +6,67 @@ const currentPath = Astro.url.pathname;
     <div class="header-inner container">
         <a href="/" class="logo" id="logo">
             <span class="logo-icon">🪐</span>
-            <span class="logo-text">Mundo<span class="logo-accent">Electrónico</span></span>
+            <span class="logo-text"
+                >Mundo<span class="logo-accent">Electrónico</span></span
+            >
         </a>
 
         <nav class="nav" id="main-nav">
-            <a 
-                href="/" 
-                class:list={["nav-link", { active: currentPath === "/" }]}
-                >Inicio</a>
             <a
-                href="/catalog" 
-                class:list={["nav-link", { active: currentPath === "/catalog" }]}
-                >Catálogo</a>
+                href="/"
+                class:list={["nav-link", { active: currentPath === "/" }]}
+                >Inicio</a
+            >
+            <a
+                href="/catalog"
+                class:list={[
+                    "nav-link",
+                    { active: currentPath === "/catalog" },
+                ]}>Catálogo</a
+            >
             <a
                 href="/cart"
                 class:list={["nav-link", { active: currentPath === "/cart" }]}
                 id="nav-cart-link"
-                >Carrito<span class="badge cart-count" id="header-cart-count" style="display:none;">0</span>
+                >Carrito<span
+                    class="badge cart-count"
+                    id="header-cart-count"
+                    style="display:none;">0</span
+                >
             </a>
         </nav>
     </div>
 </header>
+
+<!-- Mobile Navigation (Bottom Bar) -->
+<nav class="mobile-nav">
+    <a
+        href="/"
+        class:list={["mobile-nav-link", { active: currentPath === "/" }]}
+    >
+        <span class="nav-icon">🏠</span>
+        <span>Inicio</span>
+    </a>
+    <a
+        href="/catalog"
+        class:list={["mobile-nav-link", { active: currentPath === "/catalog" }]}
+    >
+        <span class="nav-icon">📦</span>
+        <span>Catálogo</span>
+    </a>
+    <a
+        href="/cart"
+        class:list={["mobile-nav-link", { active: currentPath === "/cart" }]}
+    >
+        <span class="nav-icon">🛒</span>
+        <span>Carrito</span>
+        <span
+            class="badge cart-count"
+            id="mobile-cart-count"
+            style="display:none;">0</span
+        >
+    </a>
+</nav>
 
 <script>
     import { getCartCount } from "../scripts/cartStore.js";
@@ -34,9 +74,19 @@ const currentPath = Astro.url.pathname;
     function updateCartBadge() {
         const count = getCartCount();
         const badge = document.getElementById("header-cart-count");
+        const mobileBadge = document.getElementById("mobile-cart-count");
+
+        const countStr = count.toString();
+        const displayStyle = count > 0 ? "inline-flex" : "none";
+
         if (badge) {
-            badge.textContent = count.toString();
-            badge.style.display = count > 0 ? "inline-flex" : "none";
+            badge.textContent = countStr;
+            badge.style.display = displayStyle;
+        }
+
+        if (mobileBadge) {
+            mobileBadge.textContent = countStr;
+            mobileBadge.style.display = displayStyle;
         }
     }
 
@@ -121,5 +171,71 @@ const currentPath = Astro.url.pathname;
     .cart-count {
         position: relative;
         top: -1px;
+    }
+    /* Mobile Navigation */
+    .mobile-nav {
+        display: none; /* Hidden by default (desktop) */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--color-surface);
+        border-top: 1px solid var(--color-border);
+        padding: var(--space-xs) var(--space-md);
+        z-index: 100;
+        justify-content: space-around;
+        align-items: center;
+        height: 60px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .mobile-nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: var(--space-xs);
+        border-radius: var(--radius-sm);
+        transition: color var(--transition-fast);
+    }
+
+    .mobile-nav-link.active,
+    .mobile-nav-link:hover {
+        color: var(--color-primary);
+    }
+
+    .nav-icon {
+        font-size: 1.2rem;
+    }
+
+    /* Cart Badge for Mobile */
+    .mobile-nav-link .cart-count {
+        position: absolute;
+        top: 4px;
+        right: 25%;
+        font-size: 0.65rem;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+    }
+
+    /* Responsive Logic */
+    @media (max-width: 768px) {
+        .nav {
+            display: none; /* Hide desktop nav */
+        }
+
+        .mobile-nav {
+            display: flex; /* Show mobile nav */
+        }
+
+        /* Adjust body padding if needed to prevent content being hidden behind bottom bar */
+        :global(body) {
+            padding-bottom: 60px;
+        }
     }
 </style>
