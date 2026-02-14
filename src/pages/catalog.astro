@@ -18,10 +18,7 @@ try {
   if (res.ok) products = await res.json();
 } catch {}
 
-const categories = [
-  "Todos",
-  ...new Set(products.map((p) => p.category || "General")),
-];
+const categories = [ "Todos", ...new Set(products.map((p) => p.category || "General")) ];
 ---
 
 <Layout

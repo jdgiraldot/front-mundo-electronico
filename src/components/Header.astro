@@ -1,39 +1,36 @@
 ---
+import { formatUrl } from "@/utils/url.js";
+
 const currentPath = Astro.url.pathname;
+const homeUrl = formatUrl("/");
+const catalogUrl = formatUrl("/catalog");
+const cartUrl = formatUrl("/cart");
 ---
 
 <header class="header">
     <div class="header-inner container">
-        <a href="/" class="logo" id="logo">
+        <a href={homeUrl} class="logo" id="logo">
             <span class="logo-icon">🪐</span>
-            <span class="logo-text"
-                >Mundo<span class="logo-accent">Electrónico</span></span
-            >
+            <span class="logo-text">Mundo<span class="logo-accent">Electrónico</span></span>
         </a>
 
         <nav class="nav" id="main-nav">
             <a
-                href="/"
-                class:list={["nav-link", { active: currentPath === "/" }]}
-                >Inicio</a
-            >
+                href={homeUrl}
+                class:list={["nav-link", { active: currentPath.startsWith(homeUrl) }]}
+                >Inicio</a>
             <a
-                href="/catalog"
-                class:list={[
-                    "nav-link",
-                    { active: currentPath === "/catalog" },
-                ]}>Catálogo</a
-            >
+                href={catalogUrl}
+                class:list={["nav-link", { active: currentPath.startsWith(catalogUrl) }]}
+                >Catálogo</a>
             <a
-                href="/cart"
-                class:list={["nav-link", { active: currentPath === "/cart" }]}
+                href={cartUrl}
+                class:list={["nav-link", { active: currentPath.startsWith(cartUrl) }]}
                 id="nav-cart-link"
                 >Carrito<span
                     class="badge cart-count"
                     id="header-cart-count"
-                    style="display:none;">0</span
-                >
-            </a>
+                    style="display:none;">0</span></a>
         </nav>
     </div>
 </header>
@@ -41,22 +38,22 @@ const currentPath = Astro.url.pathname;
 <!-- Mobile Navigation (Bottom Bar) -->
 <nav class="mobile-nav">
     <a
-        href="/"
-        class:list={["mobile-nav-link", { active: currentPath === "/" }]}
+        href={homeUrl}
+        class:list={["mobile-nav-link", { active: currentPath.startsWith(homeUrl) }]}
     >
         <span class="nav-icon">🏠</span>
         <span>Inicio</span>
     </a>
     <a
-        href="/catalog"
-        class:list={["mobile-nav-link", { active: currentPath === "/catalog" }]}
+        href={catalogUrl}
+        class:list={["mobile-nav-link", { active: currentPath.startsWith(catalogUrl) }]}
     >
         <span class="nav-icon">📦</span>
         <span>Catálogo</span>
     </a>
     <a
-        href="/cart"
-        class:list={["mobile-nav-link", { active: currentPath === "/cart" }]}
+        href={cartUrl}
+        class:list={["mobile-nav-link", { active: currentPath.startsWith(cartUrl) }]}
     >
         <span class="nav-icon">🛒</span>
         <span>Carrito</span>

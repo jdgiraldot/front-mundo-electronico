@@ -2,8 +2,10 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import { formatUrl } from "@/utils/url.js";
 import "@/styles/global.css";
 
+const catalogUrl = formatUrl("/catalog");
 const orderId = Astro.url.searchParams.get("orderId") || "N/A";
 ---
 
@@ -33,7 +35,7 @@ const orderId = Astro.url.searchParams.get("orderId") || "N/A";
                     envío.
                 </p>
 
-                <a href="/" class="btn btn-primary btn-lg"
+                <a href={catalogUrl} class="btn btn-primary btn-lg"
                     >← Volver a la tienda</a
                 >
             </div>

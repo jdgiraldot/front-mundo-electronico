@@ -1,15 +1,12 @@
 ---
 import type { Product } from "@/types/product";
+
 interface Props {
     product: Product;
 }
 
 const { product } = Astro.props;
-const formattedPrice = new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-}).format(product.price);
+const formattedPrice = new Intl.NumberFormat("es-CO", {style: "currency", currency: "COP", minimumFractionDigits: 0}).format(product.price);
 const inStock = product.stock > 0;
 ---
 

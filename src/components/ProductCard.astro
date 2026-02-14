@@ -1,4 +1,6 @@
 ---
+import { formatUrl } from "@/utils/url.js";
+
 interface Props {
     id: number;
     name: string;
@@ -8,19 +10,16 @@ interface Props {
 }
 
 const { id, name, price, imageUrl, stock } = Astro.props;
-const formattedPrice = new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-}).format(price);
+const formattedPrice = new Intl.NumberFormat("es-CO", {style: "currency", currency: "COP", minimumFractionDigits: 0}).format(price);
 const inStock = stock > 0;
+const productIdUrl = formatUrl(`/product/${id}`);
 ---
 
 <article class="product-card card animate-fadeInUp" data-product-id={id}>
-    <a href={`/product/${id}`} class="product-card__image-link">
+    <a href={productIdUrl} class="product-card__image-link">
         <div class="product-card__image-wrapper">
             <img
-                src={imageUrl || "/placeholder.svg"}
+                src={imageUrl || formatUrl("/placeholder.svg")}
                 alt={name}
                 class="product-card__image"
                 loading="lazy"
@@ -30,7 +29,9 @@ const inStock = stock > 0;
     </a>
 
     <div class="product-card__body">
-        <a href={`/product/${id}`} class="product-card__name">{name}</a>
+        <a href={productIdUrl} class="product-card__name"
+            >{name}</a
+        >
         <div class="product-card__footer">
             <span class="product-card__price">{formattedPrice}</span>
             <button
@@ -46,7 +47,7 @@ const inStock = stock > 0;
 </article>
 
 <script>
-    import { addToCart } from "../scripts/cartStore.js";
+    import { addToCart } from "@/scripts/cartStore.js";
 
     document.querySelectorAll(".product-card__add-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => {

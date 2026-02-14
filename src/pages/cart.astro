@@ -3,6 +3,10 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import "@/styles/global.css";
+import { formatUrl } from "@/utils/url.js";
+
+const catalogUrl = formatUrl("/catalog");
+const checkoutUrl = formatUrl("/checkout");
 ---
 
 <Layout
@@ -18,7 +22,9 @@ import "@/styles/global.css";
             <div id="cart-empty" class="cart-empty" style="display:none;">
                 <p class="cart-empty__icon">🛒</p>
                 <p class="cart-empty__text">Tu carrito está vacío</p>
-                <a href="/" class="btn btn-primary">Ver productos</a>
+                <a href={catalogUrl} class="btn btn-primary"
+                    >Ver productos</a
+                >
             </div>
 
             <div id="cart-content" style="display:none;">
@@ -41,7 +47,7 @@ import "@/styles/global.css";
                         >
                     </div>
                     <a
-                        href="/checkout"
+                        href={checkoutUrl}
                         class="btn btn-primary btn-lg"
                         id="checkout-btn"
                     >
@@ -56,19 +62,11 @@ import "@/styles/global.css";
 </Layout>
 
 <script>
-    import {
-        getCart,
-        updateQuantity,
-        removeFromCart,
-        getCartTotal,
-    } from "../scripts/cartStore.js";
+    import { getCart, updateQuantity, removeFromCart, getCartTotal } from "@/scripts/cartStore.js";
+    import { formatUrl } from "@/utils/url.js";
 
     function formatPrice(value) {
-        return new Intl.NumberFormat("es-CO", {
-            style: "currency",
-            currency: "COP",
-            minimumFractionDigits: 0,
-        }).format(value);
+        return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(value);
     }
 
     function renderCart() {
@@ -94,7 +92,7 @@ import "@/styles/global.css";
                 (item) => `
         <div class="cart-item" data-id="${item.id}">
           <div class="cart-item__product">
-            <img src="${item.imageUrl || "/placeholder.svg"}" alt="${item.name}" class="cart-item__img" />
+            <img src="${item.imageUrl || formatUrl("/placeholder.svg")}" alt="${item.name}" class="cart-item__img" />
             <span class="cart-item__name">${item.name}</span>
           </div>
           <span class="cart-item__price">${formatPrice(item.price)}</span>
