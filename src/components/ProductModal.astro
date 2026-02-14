@@ -7,7 +7,7 @@ import "@/styles/global.css";
         <button
             id="close-modal"
             class="product-modal__close"
-            aria-label="Cerrar"><b>✕</b></button
+            aria-label="Cerrar">✕</button
         >
 
         <div class="product-modal__grid">
@@ -71,17 +71,26 @@ import "@/styles/global.css";
         position: absolute;
         top: var(--space-md);
         right: var(--space-md);
+        z-index: 10;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: none;
         border: none;
-        color: var(--color-text-muted);
+        border-radius: var(--radius-sm);
         font-size: 1.5rem;
+        color: var(--color-text-muted);
         cursor: pointer;
-        z-index: 10;
-        transition: color var(--transition-fast);
+        transition:
+            color var(--transition-fast),
+            background var(--transition-fast);
     }
 
     .product-modal__close:hover {
         color: var(--color-danger);
+        background: rgba(248, 113, 113, 0.1);
     }
 
     .product-modal__grid {

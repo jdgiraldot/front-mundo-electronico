@@ -398,10 +398,6 @@ select {
   text-decoration: none;
 }
 
-.cart-item__name:hover {
-  color: var(--color-primary);
-}
-
 .cart-item__price,
 .cart-item__subtotal {
   font-weight: 600;
