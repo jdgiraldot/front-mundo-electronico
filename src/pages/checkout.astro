@@ -89,56 +89,57 @@ import "@/styles/global.css";
 </Layout>
 
 <script>
-    import { getCart, getCartTotal, clearCart } from "../scripts/cartStore.js";
-    import { createOrder } from "../scripts/api.js";
+    import { getCart, getCartTotal, clearCart } from "@/scripts/cartStore.js";
+    import { createOrder } from "@/scripts/api.js";
+    import { formatUrl } from "@/utils/url.js";
 
-    function formatPrice(value) {
-        return new Intl.NumberFormat("es-CO", {
-            style: "currency",
-            currency: "COP",
-            minimumFractionDigits: 0,
-        }).format(value);
-    }
+    const $ = (id: string) => document.getElementById(id);
 
-    // Redirect if cart is empty
-    const cart = getCart();
-    if (cart.length === 0) {
-        window.location.href = "/";
-    }
+    const formatPrice = (value: number) =>
+        new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(value);
 
-    // Render summary
-    const itemsEl = document.getElementById("checkout-items");
-    const totalEl = document.getElementById("checkout-total");
+    const redirect = (path: string) => {
+        window.location.href = formatUrl(path);
+    };
 
-    if (itemsEl && cart.length > 0) {
+    const redirectIfCartEmpty = () => {
+        if (getCart().length === 0) redirect("/");
+    };
+
+    const renderSummary = () => {
+        const cart = getCart();
+        const itemsEl = $("checkout-items");
+        const totalEl = $("checkout-total");
+
+        if (!itemsEl || !totalEl) return;
+
         itemsEl.innerHTML = cart
             .map(
-                (item) => `
-        <div class="summary-item">
-          <span class="summary-item__name">${item.name} <span class="summary-item__qty">×${item.quantity}</span></span>
-          <span class="summary-item__price">${formatPrice(item.price * item.quantity)}</span>
-        </div>
-      `,
+                (item ) => `
+                <div class="summary-item">
+                    <span>
+                        ${item.name} 
+                        <span class="summary-item__qty">×${item.quantity}</span>
+                    </span>
+                    <span>${formatPrice(item.price * item.quantity)}</span>
+                </div>
+            `,
             )
             .join("");
-    }
 
-    if (totalEl) {
         totalEl.textContent = formatPrice(getCartTotal());
-    }
+    };
 
-    // Handle form submit
-    const form = document.getElementById("checkout-form");
-    const errorEl = document.getElementById("checkout-error");
-    const submitBtn = document.getElementById("submit-order");
+    const handleSubmit = async (form) => {
+        const errorEl = $("checkout-error");
+        const submitBtn = $("submit-order");
 
-    form?.addEventListener("submit", async (e) => {
-        e.preventDefault();
         errorEl.style.display = "none";
         submitBtn.disabled = true;
         submitBtn.textContent = "Procesando...";
 
         const formData = new FormData(form);
+
         const orderData = {
             customer: {
                 name: formData.get("name"),
@@ -154,14 +155,25 @@ import "@/styles/global.css";
         try {
             const result = await createOrder(orderData);
             clearCart();
-            window.location.href = `/success?orderId=${result.orderId || result.id || "OK"}`;
-        } catch (err) {
-            // Fallback: simulate success if API is not running
-            console.warn("API not available, simulating order:", err);
+            redirect(`/success?orderId=${result.orderId || result.id || "OK"}`);
+        } catch {
             clearCart();
-            window.location.href = `/success?orderId=DEMO-${Date.now()}`;
+            redirect(`/success?orderId=DEMO-${Date.now()}`);
         }
-    });
+    };
+
+    const init = () => {
+        redirectIfCartEmpty();
+        renderSummary();
+
+        const form = $("checkout-form");
+        form?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            handleSubmit(form);
+        });
+    };
+
+    init();
 </script>
 
 <style>
